@@ -41,6 +41,10 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
     await message.answer(f"I help you leave bid and hand over here administration.\nChose action", reply_markup=inline_markup)
 
+dp.query_handler(F.data == "leave bid")
+async def guery_leave_bid():
+    await message.answer("What is the your first name?")
+
 
 @dp.message()
 async def echo_handler(message: Message) -> None:
