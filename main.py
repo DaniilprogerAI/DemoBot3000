@@ -41,10 +41,42 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
     await message.answer(f"I help you leave bid and hand over here administration.\nChose action", reply_markup=inline_markup)
 
-dp.query_handler(F.data == "leave bid")
-async def guery_leave_bid():
-    await message.answer("What is the your first name?")
+@dp.query_handler(F.data == "leave bid")
+async def guery_leave_bid(callback=CallbackQuery, state: FSMContext):
 
+    await state.set_state(BidForm.waiting_for_name)
+
+    await message.answer("What is the your first name?", reply_markup=ReplyKeyboardRemove())
+
+@dp.message(BidForm.waiting_for_name)
+async def process_bid_name(message: Message, state: FSMContext)
+    await state.update_data(name=message.text)
+
+    await state.set_state(BidForm.waiting_for_phone)
+    await message.answer("What is the your phone?")
+    
+@dp.message(BidForm.waiting_for_name)
+async def process_bid_phone(message: Message, state: FSMContext)
+    await state.update_data(phone=message.text)
+    
+    await state.set_state(BidForm.wait_for_description)
+    
+    await message.answer("Briefly describe your request")
+
+@dp.message(BidForm.wait_for_description)
+async def  process_bid_description(message: Message, state: FSMContext)
+    await state.update_data(description=message.text)
+    yes = InlineKeyboardButton(text="Send", callback_data="send")
+    no = InlineKeyboardButton(text="Rewrite", callback_data="rewrite")
+    y_or_n = [[yes], [no]]
+
+    y_or_n_reply = InlineKeyboardMarkup(inline_keyboard=y_on_n)
+
+    await message.answer("All Right?", reply_markup=y_or_n_reply)
+
+@query_handler(F.data == "rewrite")
+async def end_of_for(callback: CallbackQuery)
+    callback.message.answer("The end!")
 
 @dp.message()
 async def echo_handler(message: Message) -> None:
